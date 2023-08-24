@@ -118,7 +118,8 @@ class ProductController extends BaseController
 
     public function store(Request $request)
     {
-
+        $imagesCount = count($request->only('images')['images']);
+        $imagesCount = min(0, $imagesCount - 1);
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             // 'slug' => 'required|alpha_dash|min:5|max:255|unique:products,slug',
@@ -175,11 +176,41 @@ class ProductController extends BaseController
                 'product_id' => $product->id,
                 'file_name' => explode('/', $filepath)[1],
                 'file_path' => '/storage/' . $filepath,
+                // 'file_path' => 'U:/' . $filepath,
+
                 'original_name' => $image->getClientOriginalName()
             ]);
         }
+        
 
         return $this->sendSuccessResponse(ProductDetailsDto::build($product), 'Created successfully');
     }
+
+
+    //delete product by id
+    public function destroy($id)
+{
+    $product = Product::find($id);
+
+    if (!$product) {
+        return $this->sendError('Product not found');
+    }
+
+    // Check authorization to delete the product
+    // You might want to implement a policy or custom logic here
+    // to ensure that only authorized users can delete products
+
+    // Delete related images
+    $product->images()->delete();
+
+    // Detach tags and categories
+    $product->tags()->detach();
+    $product->categories()->detach();
+
+    // Delete the product
+    $product->delete();
+
+    return $this->sendSuccessResponse(null, 'Product deleted successfully');
+}
 
 }

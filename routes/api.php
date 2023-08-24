@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('jwt.check')->group(function () {
+Route::middleware(['jwt.check', 'cors-m'])->group(function () {
 
     // Home
     Route::get('', 'PageController@home');
@@ -72,5 +72,3 @@ Route::middleware('jwt.check')->group(function () {
 
 
 });
-
-

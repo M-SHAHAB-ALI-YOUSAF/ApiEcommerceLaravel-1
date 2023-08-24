@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController; // Make sure to adjust the namespace
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,4 +16,11 @@
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
 });
